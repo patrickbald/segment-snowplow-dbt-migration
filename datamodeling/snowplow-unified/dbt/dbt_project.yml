@@ -1,0 +1,127 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dg_unified'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dg_unified'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['snowplow_utils', 'dbt']
+
+# copied from https://github.com/snowplow/dbt-snowplow-unified/blob/main/dbt_project.yml#L25-L123
+vars:
+  snowplow_unified:
+    # See https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-configuration/unified/ for more information and an interactive tool to help you with the variable setup
+    # Please only add those that you change the values of to your root dbt_project.yml file, do not copy all values as this can lead to unexpected issues
+
+    # WAREHOUSE & TRACKER
+    # See https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-configuration/unified/ for more information
+    snowplow__atomic_schema: 'SNOWPLOW_SCHEMA' # Only set if not using 'atomic' schema for Snowplow events data
+    #snowplow__database: # Only set if not using target.database for Snowplow events data -- WILL BE IGNORED FOR DATABRICKS
+    #snowplow__dev_target_name: dev
+    #snowplow__events: "{{ source('atomic', 'events') }}"
+    snowplow__events_table: "EVENTS" # Only set if not using 'events' table for Snowplow events data
+    #snowplow__enable_web: true
+    snowplow__enable_mobile: false
+    snowplow__heartbeat: 30
+    snowplow__min_visit_length: 30
+    #snowplow__sessions_table: "{{ ref('snowplow_unified_sessions') }}" # Change to your custom sessions table if you have disabled the standard sessions table in favour of a custom version. Advanced config.
+    #snowplow__ga4_categories_seed: snowplow_unified_dim_ga4_source_categories
+    #snowplow__geo_mapping_seed: snowplow_unified_dim_geo_country_mapping
+    #snowplow__rfc_5646_seed: snowplow_unified_dim_rfc_5646_language_mapping
+    #snowplow__iso_639_2t_seed: snowplow_unified_dim_iso_639_2t
+    #snowplow__iso_639_3_seed: snowplow_unified_dim_iso_639_3
+    #snowplow__grant_select_to: []
+    #snowplow__grant_schema_usage: true
+  
+
+    # OPERATION & LOGIC
+    #snowplow__allow_refresh: false
+    #snowplow__backfill_limit_days: 30
+    # snowplow__conversion_events: [{'name': 'view_page', 'condition': "event_name = 'page_view'", "list_events": true},
+    #                               {'name': 'sign_up', 'condition': "event_name = 'sign_up'", 'value': 5}
+    #                             ]
+    #snowplow__cwv_days_to_measure: 28
+    #snowplow__cwv_percentile: 75
+    #snowplow__days_late_allowed: 3
+    # snowplow__allow_null_dvce_tstamps: false
+    snowplow__list_event_counts: true
+    #snowplow__lookback_window_hours: 6
+    #snowplow__max_session_days: 3
+    #snowplow__session_lookback_days: 730
+    #snowplow__session_stitching: true
+    #snowplow__view_stitching: false
+    #snowplow__conversion_stitching: true
+    #snowplow__session_timestamp: collector_tstamp
+    snowplow__start_date: '2025-04-01'
+    snowplow__total_all_conversions: true
+    #snowplow__upsert_lookback_days: 30
+    #snowplow__use_refr_if_mkt_null: false 
+    #snowplow__enable_initial_checks: false
+
+    # please refer to the macros within identifiers.sql for default values
+    #snowplow__session_identifiers: []
+    #snowplow__user_identifiers: []
+    # snowplow__session_sql: 'e.domain_sessionid'
+    # snowplow__user_sql: 'e.domain_userid'
+    # snowplow__custom_sql: ''
+    #snowplow__user_stitching_id: user_id
+    # filter your data:
+    snowplow__app_id: ['www-rails']
+    snowplow__ua_bot_filter: true
+
+    # ADDITIONS
+    # add extra web fields:
+    snowplow__enable_yauaa: true
+    snowplow__enable_iab: true
+    snowplow__enable_ua: true
+    #snowplow__enable_browser_context: false
+    snowplow__enable_browser_context_2 : false
+    # add extra mobile fields:
+    snowplow__enable_mobile_context: false
+    #snowplow__enable_geolocation_context: false
+    #snowplow__enable_application_context: false
+    #snowplow__enable_screen_context: false
+    #snowplow__enable_deep_link_context: false
+    #snowplow__enable_screen_summary_context: false
+    # add extra custom fields:
+    #snowplow__view_passthroughs: []
+    #snowplow__session_passthroughs: []
+    #snowplow__user_first_passthroughs: []
+    #snowplow__user_last_passthroughs: []
+    #snowplow__conversion_passthroughs: []
+    #snowplow__view_aggregations: []
+    #snowplow__session_aggregations: []
+    #snowplow__user_aggregations: []
+
+    # enable custom modules:
+    #snowplow__enable_consent: false
+    #snowplow__enable_cwv: false
+    #snowplow__enable_app_errors: false
+    #snowplow__enable_conversions: false
+
+    # Snowflake:
+    #snowplow__query_tag: snowplow_dbt
+    #snowplow__snowflake_lakeloader: false
