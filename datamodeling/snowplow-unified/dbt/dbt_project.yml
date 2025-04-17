@@ -108,11 +108,11 @@ vars:
     #snowplow__enable_screen_summary_context: false
     # add extra custom fields:
     snowplow__view_passthroughs: [
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_RESOURCE_1[0]:resource_id::varchar', 'alias': 'resource_id'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_RESOURCE_1[0]:resource_title::varchar', 'alias': 'resource_title'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:grouping_id::varchar', 'alias': 'grouping_id'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:grouping_label::varchar', 'alias': 'grouping_label'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:grouping_type::varchar', 'alias': 'grouping_type'}
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_RESOURCE_1[0]:id::varchar', 'alias': 'resource_id'},
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_RESOURCE_1[0]:title::varchar', 'alias': 'resource_title'},
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:id::varchar', 'alias': 'grouping_id'},
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:label::varchar', 'alias': 'grouping_label'},
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:type::varchar', 'alias': 'grouping_type'}
     ]
     #snowplow__session_passthroughs: []
     #snowplow__user_first_passthroughs: []
