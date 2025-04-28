@@ -112,9 +112,7 @@ vars:
       {'sql': 'CONTEXTS_COM_DESIRINGGOD_RESOURCE_1[0]:title::varchar', 'alias': 'resource_title'},
       {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:id::varchar', 'alias': 'grouping_id'},
       {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:label::varchar', 'alias': 'grouping_label'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:type::varchar', 'alias': 'grouping_type'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_UI_ELEMENT_1[0]:name::varchar', 'alias': 'ui_element_name'},
-      {'sql': 'CONTEXTS_COM_DESIRINGGOD_UI_ELEMENT_1[0]:action::varchar', 'alias': 'ui_element_action'}
+      {'sql': 'CONTEXTS_COM_DESIRINGGOD_GROUPING_1[0]:type::varchar', 'alias': 'grouping_type'}
     ]
     #snowplow__session_passthroughs: []
     #snowplow__user_first_passthroughs: []
