@@ -85,6 +85,27 @@ vars:
         "name": "subscribe_to_prayer_updates",
         "condition": "event_name = 'subscribe' and CONTEXTS_COM_DESIRINGGOD_EMAIL_LIST_1[0]:name::varchar = 'Prayer Updates'",
         "list_events": true
+      },
+      {
+        "name": "give",
+        "condition": "event_name = 'give'",
+        "list_events": true,
+        "value": "UNSTRUCT_EVENT_COM_DESIRINGGOD_GIVE_1:amount::decimal(22,2)",
+        "default_value": 0
+      },
+      {
+        "name": "give_recurring",
+        "condition": "event_name = 'give' and UNSTRUCT_EVENT_COM_DESIRINGGOD_GIVE_1:recurring::boolean = true",
+        "list_events": true,
+        "value": "UNSTRUCT_EVENT_COM_DESIRINGGOD_GIVE_1:amount::decimal(22,2)",
+        "default_value": 0
+      },
+      {
+        "name": "give_one_time",
+        "condition": "event_name = 'give' and UNSTRUCT_EVENT_COM_DESIRINGGOD_GIVE_1:recurring::boolean = false",
+        "list_events": true,
+        "value": "UNSTRUCT_EVENT_COM_DESIRINGGOD_GIVE_1:amount::decimal(22,2)",
+        "default_value": 0
       }
     ]
     #snowplow__cwv_days_to_measure: 28
