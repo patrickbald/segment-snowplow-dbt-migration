@@ -117,7 +117,7 @@ vars:
     #snowplow__max_session_days: 3
     #snowplow__session_lookback_days: 730
     #snowplow__session_stitching: true
-    #snowplow__view_stitching: false
+    snowplow__view_stitching: true
     snowplow__conversion_stitching: true
     #snowplow__session_timestamp: collector_tstamp
     snowplow__start_date: '2025-04-01'
