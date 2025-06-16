@@ -56,7 +56,7 @@ vars:
     #snowplow__max_session_days: 3
     #snowplow__upsert_lookback_days: 30
     #snowplow__allow_refresh: false
-    snowplow__app_id: ['www-rails', 'ui', 'api']
+    snowplow__app_id: ['www-rails', 'ui', 'api', 'www-podcasts']
     #snowplow__session_timestamp: collector_tstamp
     # please refer to the macros within identifiers.sql for default session and user values
     #snowplow__session_identifiers: []
