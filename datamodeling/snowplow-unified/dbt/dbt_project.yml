@@ -134,7 +134,7 @@ vars:
     # snowplow__custom_sql: ''
     #snowplow__user_stitching_id: user_id
     # filter your data:
-    snowplow__app_id: ['www-rails', 'ui', 'api']
+    snowplow__app_id: ['www-rails', 'ui', 'api', 'www-podcasts']
     snowplow__ua_bot_filter: true
 
     # ADDITIONS
