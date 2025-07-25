@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+- name: segment
+  database: snowflake
+  schema: ""
+  tables:
+    - name: pages
+    - name: tracks

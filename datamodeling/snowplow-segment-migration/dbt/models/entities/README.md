@@ -1,0 +1,1 @@
+models for capturing data into snowplow OOTB entities and general catch all entity

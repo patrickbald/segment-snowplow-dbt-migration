@@ -1,0 +1,1 @@
+intial mapping for direct segment to snowplow cols
