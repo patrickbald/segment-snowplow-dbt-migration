@@ -32,5 +32,11 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   snowplow_segment_migration:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
       +materialized: view
+    entities:
+      +materialized: view
+    core:
+      +materialized: table
+    sources:
+      +enabled: true
