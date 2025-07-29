@@ -1,1 +1,0 @@
-Model for final event assembly
