@@ -1,9 +1,3 @@
-with source as ( 
-    select * from {{ source('segment', 'pages')}}
-)
+-- models/staging/test_source.sql
 
-select
-    anonymous_id as domain_userid,
-
-from source
 

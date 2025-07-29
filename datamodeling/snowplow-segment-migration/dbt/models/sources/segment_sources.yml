@@ -1,9 +1,217 @@
 version: 2
 
 sources:
-- name: segment
-  database: snowflake
-  schema: ""
-  tables:
-    - name: pages
-    - name: tracks
+  - name: ask_pastor_john
+    database: REDSHIFT_BACKUP
+    schema: ASK_PASTOR_JOHN
+    tables:
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: ASK_A_QUESTION_CLICKED
+      - name: AUDIT
+      - name: EPISODE_PLAYED
+      - name: SCREENS
+      - name: SEARCH_TEXT_ENTERED
+      - name: SHARE_CLICKED
+      - name: TRACKS
+
+  - name: ask_pastor_john_ios
+    database: REDSHIFT_BACKUP
+    schema: ASK_PASTOR_JOHN_IOS
+    tables:
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: APPLICATION_UPDATED
+      - name: EPISODE_PLAYED
+      - name: EPISODE_SHARE_CLICKED
+      - name: SCREENS
+      - name: TRACKS
+
+  - name: hub
+    database: REDSHIFT_BACKUP
+    schema: HUB
+    tables:
+      - name: ALIASES
+      - name: EMAIL_SUBSCRIBED
+      - name: EMAIL_UNSUBSCRIBED
+      - name: GIFTS
+      - name: GIFT_BOUNCED
+      - name: GIFT_CHARGEDBACK
+      - name: GIFT_GATEWAY_REJECTED
+      - name: GIFT_PROCESSOR_DECLINED
+      - name: GIFT_RECEIVED
+      - name: GIFT_REFUNDED
+      - name: GIFT_SETTLING
+      - name: GIFT_SUBMITTED
+      - name: GIFT_VOIDED
+      - name: IDENTIFIES
+      - name: TRACKS
+      - name: USERS
+
+  - name: production_desiring_god_website
+    database: REDSHIFT_BACKUP
+    schema: PRODUCTION_DESIRING_GOD_WEBSITE
+    tables:
+      - name: ACCOUNT_CLICK
+      - name: APJ_EMAIL_FORM_SUBMIT
+      - name: ARTICLE_EMAIL_FORM_SUBMIT
+      - name: BANNER_CLICK
+      - name: BOOK_CLICK
+      - name: BROWSE_CLICK
+      - name: CONTENT_EXIT_INTENT
+      - name: CREATE_AN_ACCOUNT_FORM_SUBMIT
+      - name: CTP_A_TOPICAL_SURVEY_CLICK
+      - name: CTP_MORE_ON_TOPIC_CLICK
+      - name: CTP_OTHER_TOPICS_CLICK
+      - name: CTP_RELATED_TOPICS_CLICK
+      - name: CTP_RESOURCE_CLICK
+      - name: CTP_SHARE_WITH_OTHERS_CLICK
+      - name: CTP_VIEW_MORE_ON_THIS_TOPIC_CLICK
+      - name: C_C_ALBANIAN_CLICK
+      - name: C_C_ARABIC_CLICK
+      - name: C_C_FRENCH_CLICK
+      - name: C_C_GERMAN_CLICK
+      - name: C_C_INDONESIAN_CLICK
+      - name: C_C_ITALIAN_CLICK
+      - name: C_C_KOREAN_CLICK
+      - name: C_C_OL_CLICK
+      - name: C_C_POLISH_CLICK
+      - name: C_C_PORTUGUESE_CLICK
+      - name: C_C_RUSSIAN_CLICK
+      - name: C_C_SPANISH_CLICK
+      - name: C_C_URDU_CLICK
+      - name: DESIRING_GOD_SOCIAL_OUTBOUND_CLICK
+      - name: DONATE_CONFIRM
+      - name: DONATE_FOOTER_CLICK
+      - name: DONATE_HEADER_CLICK
+      - name: DONATE_SUBMIT
+      - name: DOWNLOAD_APP_OUTBOUND_CLICK
+      - name: DOWNLOAD_BOOK_ACTION_CLICK
+      - name: DOWNLOAD_BOOK_CLICK
+      - name: EMAIL_FORM_SUBMIT
+      - name: EMAIL_UPDATES_FORM_SUBMIT
+      - name: FINANCIAL_STEWARDSHIP_CLICK
+      - name: FOOTER_EMAIL_UPDATES_FORM_SUBMIT
+      - name: FOOTER_LEARN_MORE_CLICK
+      - name: HEADER_NAVIGATION_CLICK
+      - name: HELLO
+      - name: HERE_WE_STAND_EMAIL_FORM_SUBMIT
+      - name: HERE_WE_STAND_INVITE_OTHERS_SHARE_CLICK
+      - name: HERE_WE_STAND_I_TUNES_CLICK
+      - name: HERE_WE_STAND_RSS_CLICK
+      - name: HOMEPAGE_EMAIL_FORM_SUBMIT
+      - name: HOMEPAGE_FEATURED_RESOURCE_CLICK
+      - name: HOMEPAGE_MORE_CLICK
+      - name: HOMEPAGE_MORE_OF_NEWEST_CLICK
+      - name: HOMEPAGE_MORE_OF_RECENT_CLICK
+      - name: IDENTIFIES
+      - name: JOHN_PIPER_SOCIAL_OUTBOUND_CLICK
+      - name: LAB_EMAIL_FORM_SUBMIT
+      - name: LOGIN_FORM_SUBMIT
+      - name: MAIN_MENU_CLOSE_CLICK
+      - name: MAIN_MENU_NAVIGATION_CLICK
+      - name: MAIN_MENU_OPEN_CLICK
+      - name: MORE_RESOURCES_CLICK
+      - name: NEXT_LAB_CLICK
+      - name: OPOPVQVQVQVQ
+      - name: PAGES
+      - name: PLAY_CLICK
+      - name: PREVIOUS_LAB_CLICK
+      - name: PURCHASE_BOOK_CLICK
+      - name: PURCHASE_BOOK_OUTBOUND_CLICK
+      - name: RESOURCE_SHARE_ICON_CLICK
+      - name: RESOURCE_SHARE_SOCIAL_CLICK
+      - name: SEARCH_BAR_SUBMIT
+      - name: SEARCH_BAR_TEXT_EDIT
+      - name: SEARCH_ICON_CLOSE_CLICK
+      - name: SEARCH_ICON_OPEN_CLICK
+      - name: SEARCH_SUBMIT
+      - name: SEARCH_TEXT_EDIT
+      - name: SERIES_CTA_APPLE_PODCASTS_CLICK
+      - name: SERIES_CTA_BLADER_DOOR_ALLE_PROFIELEN_CLICK
+      - name: SERIES_CTA_BROWSE_ALL_PROFILES_CLICK
+      - name: SERIES_CTA_BUSCAR_TODOS_LOS_PERFILES_CLICK
+      - name: SERIES_CTA_CLICK
+      - name: SERIES_CTA_EXAMINAR_TODOS_LOS_PERFILES_CLICK
+      - name: SERIES_CTA_EXPLORAR_TODOS_LOS_PERFILES_CLICK
+      - name: SERIES_CTA_E_BOOK_CLICK
+      - name: SERIES_CTA_E_BOOK_EN_CLICK
+      - name: SERIES_CTA_ITUNES_CLICK
+      - name: SERIES_CTA_I_BROWSE_ANG_LAHAT_NG_PROFILE_CLICK
+      - name: SERIES_CTA_I_TUNES_2_I_TUNES_CLICK
+      - name: SERIES_CTA_I_TUNES_CLICK
+      - name: SERIES_CTA_I_TUNES_EN_INGL_S_CLICK
+      - name: SERIES_CTA_I_TUNES_I_TUNES_CLICK
+      - name: SERIES_CTA_LIBRO_ELECTRONICO_CLICK
+      - name: SERIES_CTA_LIBRO_ELECTR_NICO_CLICK
+      - name: SERIES_CTA_PAPERBACK_CLICK
+      - name: SERIES_CTA_PARCOURIR_TOUS_LES_PROFILS_CLICK
+      - name: SERIES_CTA_PODCASTS_DA_APPLE_CLICK
+      - name: SERIES_CTA_PODCASTS_DE_APPLE_CLICK
+      - name: SERIES_CTA_PODCAST_DI_APPLE_CLICK
+      - name: SERIES_CTA_PROCURAR_TODOS_OS_PERFIS_CLICK
+      - name: SERIES_CTA_RSS_CLICK
+      - name: SERIES_CTA_RSS_RSS_CLICK
+      - name: SERIES_CTA_R_STICA_CLICK
+      - name: SERIES_CTA_SPOTIFY_CLICK
+      - name: SERIES_CTA_SPOTTIZZARE_CLICK
+      - name: SHARE_WITH_OTHERS_CLICK
+      - name: SJ_EMAIL_FORM_SUBMIT
+      - name: SUBSCRIBE_CLICK
+      - name: SUBSCRIBE_OUTBOUND_CLICK
+      - name: SUBSCRIBE_PAGE_EMAIL_FORM_SUBMIT
+      - name: SUBSCRIBE_STAND_PAGE_EMAIL_FORM_SUBMIT
+      - name: TRACKS
+      - name: TRY_SEARCHING_CLICK
+      - name: USERS
+      - name: VILLAIN_AND_SIDEKICK_CLICK
+
+  - name: ruby_production_desiring_god_website
+    database: REDSHIFT_BACKUP
+    schema: RUBY_PRODUCTION_DESIRING_GOD_WEBSITE
+    tables:
+      - name: HOLY_WEEK_2025_SUBSCRIBED
+      - name: TRACKS
+
+  - name: sermon_of_the_day_android
+    database: REDSHIFT_BACKUP
+    schema: SERMON_OF_THE_DAY_ANDROID
+    tables:
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: SCREENS
+      - name: SERMON_PLAYED
+      - name: TRACKS
+
+  - name: sermon_of_the_day_ios
+    database: REDSHIFT_BACKUP
+    schema: SERMON_OF_THE_DAY_IOS
+    tables:
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: SCREENS
+      - name: SERMON_PLAYED
+      - name: SERMON_SHARE_CLICKED
+      - name: TRACKS
+
+  - name: solid_joys_android
+    database: REDSHIFT_BACKUP
+    schema: SOLID_JOYS_ANDROID
+    tables:
+      - name: APPLICATION_BACKGROUNDED
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: APPLICATION_UPDATED
+      - name: SCREENS
+      - name: TRACKS
+
+  - name: solid_joys_ios
+    database: REDSHIFT_BACKUP
+    schema: SOLID_JOYS_IOS
+    tables:
+      - name: APPLICATION_INSTALLED
+      - name: APPLICATION_OPENED
+      - name: APPLICATION_UPDATED
+      - name: DEVOTIONAL
+      - name: SCREENS
+      - name: TRACKS
