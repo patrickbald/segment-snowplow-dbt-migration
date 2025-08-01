@@ -1,1 +1,0 @@
-SELECT * FROM {{ source('solid_joys_ios', 'tracks') }} LIMIT 10

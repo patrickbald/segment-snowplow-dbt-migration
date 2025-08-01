@@ -2,7 +2,7 @@
 -- models/final/final_column_mapping.sql
 
 {%- set columns_to_drop = [
-    "EVENT_NAME"
+    "event_name"
 ] -%}
 
 WITH unioned_events AS (
