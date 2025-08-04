@@ -34,15 +34,13 @@ models:
     # Config indicated by + and applies to all files under models/example/
     base:
       +materialized: view
-      staging_data:
-        +materialized: view
     assembly:
       +materialized: table
     sources:
       +enabled: true
 
 vars:
-  unmapped_event_context_schema: 'iglu:com.desiringgod/unmapped_segment_data/jsonschema/1-0-0'
-  mobile_context_schema: ''
+  # unmapped_event_context_schema: 'iglu:com.desiringgod/unmapped_segment_data/jsonschema/1-0-0'
+  mobile_context_schema: 'iglu:com.snowplowanalytics.snowplow/mobile_context/jsonschema/1-0-3'
 
 

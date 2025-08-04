@@ -1,47 +1,53 @@
--- models/staging/stg_unioned_events.sql
+-- models/base/base_column_mapping.sql
 
 {#-
-  Define Segment -> Snowplow column mappings
-  KEY: The desired column name.
-  VALUE: A LIST of possible source column names. The macro will create a COALESCE() statement.
+  Define the standard column mappings.
+  KEY: The new, desired column name.
+  VALUE: A LIST of potential source columns to coalesce, or a single STRING for a direct rename.
 -#}
-{%- set snowplow_column_map = {
+{%- set column_rename_map = {
     "domain_userid": "anonymous_id",
     "event_id": "id",
-    "page_referrer": "referrer",
     "userid": "user_id",
-    "collector_tstamp": "received_at"
+    "collector_tstamp": "received_at",
+    "page_url": ["url", "context_page_url"]
 } -%}
 
-{% if target.name == 'dev' %}
+{#-
+  Define context mappings.
+  - Top-level KEY is the name of your context (e.g., web_page_context).
+  - Nested KEY is the target field name in the Snowplow context schema.
+  - Nested VALUE is the original source column name.
+-#}
+{%- set context_definitions = {
+    "mobile_context": {
+        "osVersion": "context_os_version",
+        "osType": "context_device_type",
+    }
+} -%}
 
-    {#- In DEV, union only the small, sampled models -#}
-    {{ dbt_utils.union_relations(
-        relations=[
-            ref('ask_pastor_john'),
-            ref('prod_dg_website'),
-            ref('ruby_prod_dg_website')
-        ],
-        column_override=snowplow_column_map,
-        source_column_name='source_relation',
-        include=snowplow_column_map.keys() | list,
-    ) }}
 
-{% else %}
+{%- set all_sources = [] -%}
+{%- for src in graph.sources.values() if src.database == 'REDSHIFT_BACKUP' -%}
+    {%- do all_sources.append(source(src.source_name, src.name)) -%}
+{%- endfor -%}
 
-    {#- Dynamically get list of all source tables for union. -#}
-    {%- set sources_to_union = [] -%}
-    {%- for src in graph.sources.values() if src.database == 'REDSHIFT_BACKUP' -%}
-        {%- do sources_to_union.append( source(src.source_name, src.name) ) -%}
-    {%- endfor -%}
 
-    {#- Use union_relations to stack tables and assign column names -#}
-    {#- WARNING - union relations does not have a limit built in -#}
-    {{ dbt_utils.union_relations(
-        relations=sources_to_union,
-        column_override=snowplow_column_map,
-        include=snowplow_column_map.keys() | list,
-        source_column_name='source_relation'
-    ) }}
+{% for source_relation in all_sources %}
+    
+    (
+        SELECT 
+            '{{ source_relation.source_name | lower }}.{{ source_relation.name | lower }}' as source_relation,
+            *
+        FROM (
+            {{ stage_source_with_contexts(
+                source_relation=source_relation,
+                column_map=column_rename_map,
+                context_definitions=context_definitions
+            ) }}
+        )
+    )
 
-{% endif %}
+    {{ 'UNION ALL' if not loop.last }}
+
+{% endfor %}
