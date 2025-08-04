@@ -14,7 +14,7 @@ SELECT
     {{ dbt_utils.star(from=ref('base_column_mapping'), except=columns_to_drop) }},
 
     -- Keep the original name for reference
-    event_name AS original_event_name,
+    event_name AS original_event_name
 
     -- Rename certain events
     CASE

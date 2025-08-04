@@ -23,7 +23,8 @@
             ref('ruby_prod_dg_website')
         ],
         column_override=snowplow_column_map,
-        source_column_name='source_relation'
+        source_column_name='source_relation',
+        include=snowplow_column_map.keys() | list,
     ) }}
 
 {% else %}
