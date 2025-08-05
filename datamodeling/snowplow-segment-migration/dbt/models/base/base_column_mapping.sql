@@ -41,9 +41,16 @@
 
 {%- endfor -%}
 
+{%- if var('use_explicit_columns', false) -%}
+    {%- set select_mode = 'explicit' -%}
+{%- else -%}
+    {%- set select_mode = 'all' -%}
+{%- endif -%}
+
 {#- Call the macro to perform the union on the filtered list of sources -#}
 {{ union_sources_with_renaming(
     relations=all_sources,
     column_map=column_rename_map,
-    context_definitions=context_definitions
+    context_definitions=context_definitions,
+    select_mode=select_mode
 ) }}

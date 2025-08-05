@@ -1,6 +1,6 @@
 -- macros/staging_logic.sql
 
-{% macro union_sources_with_renaming(relations, column_map, context_definitions) %}
+{% macro union_sources_with_renaming(relations, column_map, context_definitions, select_mode='explicit') %}
 
     {#-================================================================================================================-#}
     {#-  STEP 1: Build superset of all columns and identify handled columns.                           -#}
@@ -73,7 +73,8 @@
             {%- endfor %}
 
             {#-- Include all other columns from the superset, that have not been handled or would cause a duplicate --#}
-            {%- for col_name, col_type in all_columns.items() if col_name not in handled_source_cols|map('lower')|list and col_name not in target_cols -%}
+            {%- if select_mode == 'all' -%}
+            , {%- for col_name, col_type in all_columns.items() if col_name not in handled_source_cols|map('lower')|list and col_name not in target_cols -%}
                 {%- if col_name in relation_cols_lower -%}
                 "{{ col_name }}"
                 {%- else -%}
@@ -81,6 +82,7 @@
                 {%- endif -%}
                 {{- ",\n" if not loop.last }}
             {%- endfor %}
+            {%- endif %}
 
         FROM {{ relation }}
 

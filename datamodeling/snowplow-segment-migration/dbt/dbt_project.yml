@@ -46,3 +46,4 @@ vars:
   include_sources:
     - ask_pastor_john
     - production_desiring_god_website
+  use_explicit_columns: true # Set to false to select all cols in superset of sources
