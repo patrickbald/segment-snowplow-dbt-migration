@@ -7,7 +7,7 @@
     {#-================================================================================================================-#}
     {%- set all_columns = {} -%}
     {%- set handled_source_cols = [] -%}
-    {%- set target_cols = column_map.keys() | map('lower') | list -%} {# V V V NEW LOGIC V V V #}
+    {%- set target_cols = column_map.keys() | map('lower') | list -%} 
 
     {#- Get all the source columns that will be explicitly handled -#}
     {%- for target_col, source_val in column_map.items() -%}
@@ -19,7 +19,7 @@
     {%- endfor -%}
     {%- for context, context_map in context_definitions.items() -%}
         {%- do handled_source_cols.extend(context_map.values()) -%}
-        {%- do target_cols.append(context ~ '_data') -%} {# V V V NEW LOGIC V V V #}
+        {%- do target_cols.append(context ~ '_data') -%} 
     {%- endfor -%}
 
     {#- Get all columns from sources -#}
