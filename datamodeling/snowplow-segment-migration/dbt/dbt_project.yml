@@ -43,4 +43,6 @@ vars:
   # unmapped_event_context_schema: 'iglu:com.desiringgod/unmapped_segment_data/jsonschema/1-0-0'
   mobile_context_schema: 'iglu:com.snowplowanalytics.snowplow/mobile_context/jsonschema/1-0-3'
 
-
+  include_sources:
+    - ask_pastor_john
+    - production_desiring_god_website

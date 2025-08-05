@@ -2,52 +2,48 @@
 
 {#-
   Define the standard column mappings.
-  KEY: The new, desired column name.
-  VALUE: A LIST of potential source columns to coalesce, or a single STRING for a direct rename.
 -#}
 {%- set column_rename_map = {
-    "domain_userid": "anonymous_id",
-    "event_id": "id",
-    "userid": "user_id",
+    "domain_userid":    "anonymous_id",
+    "event_id":         "id",
+    "userid":           "user_id",
     "collector_tstamp": "received_at",
-    "page_url": ["url", "context_page_url"]
+    "page_url":         ["page_url", "url", "context_page_url"],
+    "event":            ["event_text", "event"]
 } -%}
 
 {#-
   Define context mappings.
-  - Top-level KEY is the name of your context (e.g., web_page_context).
-  - Nested KEY is the target field name in the Snowplow context schema.
-  - Nested VALUE is the original source column name.
 -#}
 {%- set context_definitions = {
     "mobile_context": {
         "osVersion": "context_os_version",
-        "osType": "context_device_type",
+        "osType": "context_os_name",
+        "deviceManufacturer": "context_device_manufacturer",
+        "deviceModel": "context_device_model"
     }
 } -%}
 
+{#- Get the include/exclude lists from the project vars -#}
+{%- set include_list = var('include_sources', []) -%}
+{%- set exclude_list = var('exclude_sources', []) -%}
 
+{#- Get a list of all source relations and apply the filtering logic -#}
 {%- set all_sources = [] -%}
 {%- for src in graph.sources.values() if src.database == 'REDSHIFT_BACKUP' -%}
-    {%- do all_sources.append(source(src.source_name, src.name)) -%}
+
+    {%- set source_name = src.source_name | lower -%}
+
+    {#- Logic to decide whether to include the source in the run -#}
+    {%- if (include_list | length > 0 and source_name in include_list) or (include_list | length == 0 and source_name not in exclude_list) -%}
+        {%- do all_sources.append(source(src.source_name, src.name)) -%}
+    {%- endif -%}
+
 {%- endfor -%}
 
-
-{% for source_relation in all_sources %}
-    
-    (
-        SELECT 
-            '{{ source_relation.source_name | lower }}.{{ source_relation.name | lower }}' as source_relation,
-            *
-        FROM (
-            {{ stage_source_with_contexts(
-                source_relation=source_relation,
-                column_map=column_rename_map,
-                context_definitions=context_definitions
-            ) }}
-        )
-    )
-
-    {{ 'UNION ALL' if not loop.last }}
-
-{% endfor %}
+{#- Call the macro to perform the union on the filtered list of sources -#}
+{{ union_sources_with_renaming(
+    relations=all_sources,
+    column_map=column_rename_map,
+    context_definitions=context_definitions
+) }}
