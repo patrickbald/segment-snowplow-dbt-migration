@@ -3,7 +3,7 @@
 {% macro union_sources_with_renaming(relations, column_map, context_definitions, select_mode='explicit') %}
 
     {#-================================================================================================================-#}
-    {#-  STEP 1: Build superset of all columns and identify handled columns.                           -#}
+    {#-  STEP 1: Build the master "superset" of all columns and identify handled columns.                           -#}
     {#-================================================================================================================-#}
     {%- set all_columns = {} -%}
     {%- set handled_source_cols = [] -%}
@@ -22,7 +22,7 @@
         {%- do target_cols.append(context ~ '_data') -%} 
     {%- endfor -%}
 
-    {#- Get all columns from sources -#}
+    {#- Now, loop through every relation to find all possible columns -#}
     {%- for relation in relations -%}
         {%- set cols = adapter.get_columns_in_relation(relation) -%}
         {%- for col in cols -%}
@@ -31,7 +31,7 @@
     {%- endfor -%}
 
     {#-================================================================================================================-#}
-    {#-  STEP 2: Loop through each relation again and generate the final SELECT statements.              -#}
+    {#-  STEP 2: Loop through each relation again and generate the final, resilient SELECT statements.              -#}
     {#-================================================================================================================-#}
     {% for relation in relations %}
     (
@@ -50,35 +50,36 @@
                     {% endfor %}
 
                     {% if existing_cols | length > 1 %}
-                        COALESCE( {%- for col in existing_cols -%} "{{ col }}" {{- ',' if not loop.last }} {%- endfor -%} )
+                        COALESCE( {%- for col in existing_cols -%} {{ adapter.quote(col) }} {{- ',' if not loop.last }} {%- endfor -%} )
                     {% elif existing_cols | length == 1 %}
-                        "{{ existing_cols[0] }}"
+                        {{ adapter.quote(existing_cols[0]) }}
                     {% else %}
                         NULL
                     {% endif %}
                 {% else %}
-                    {%- if source_val.lower() in relation_cols_lower -%} "{{ source_val }}" {%- else -%} NULL {%- endif -%}
+                    {%- if source_val.lower() in relation_cols_lower -%} {{ adapter.quote(source_val) }} {%- else -%} NULL {%- endif -%}
                 {% endif %}
-                AS "{{ target_col }}",
+                AS {{ adapter.quote(target_col) }},
             {%- endfor %}
 
             {#-- Create a JSON object for each defined context --#}
-            {%- for context_name, context_map in context_definitions.items() -%}
+            {%- for context_var_name, context_map in context_definitions.items() -%}
+            {%- set column_name = context_var_name ~ '_data' -%}
             OBJECT_CONSTRUCT(
                 {%- for target_field, source_field in context_map.items() if source_field.lower() in relation_cols_lower -%}
-                '{{ target_field }}', "{{ source_field }}"
+                '{{ target_field }}', {{ adapter.quote(source_field) }}
                 {{- ',' if not loop.last }}
                 {%- endfor -%}
-            ) AS "{{ context_name }}_data",
+            ) AS {{ adapter.quote(column_name) }},
             {%- endfor %}
 
-            {#-- Include all other columns from the superset, that have not been handled or would cause a duplicate --#}
+            {#-- Include all other columns from the superset --#}
             {%- if select_mode == 'all' -%}
-            , {%- for col_name, col_type in all_columns.items() if col_name not in handled_source_cols|map('lower')|list and col_name not in target_cols -%}
+            {%- for col_name, col_type in all_columns.items() if col_name not in handled_source_cols|map('lower')|list and col_name not in target_cols -%}
                 {%- if col_name in relation_cols_lower -%}
-                "{{ col_name }}"
+                {{ adapter.quote(col_name) }}
                 {%- else -%}
-                NULL AS "{{ col_name }}"
+                NULL AS {{ adapter.quote(col_name) }}
                 {%- endif -%}
                 {{- ",\n" if not loop.last }}
             {%- endfor %}

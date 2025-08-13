@@ -41,9 +41,42 @@ models:
 
 vars:
   # unmapped_event_context_schema: 'iglu:com.desiringgod/unmapped_segment_data/jsonschema/1-0-0'
-  mobile_context_schema: 'iglu:com.snowplowanalytics.snowplow/mobile_context/jsonschema/1-0-3'
+  contexts_com_snowplow_mobile_context_1: 'iglu:com.snowplowanalytics.snowplow/mobile_context/jsonschema/1-0-3'
+  contexts_com_snowplow_application_1: 'iglu:com.snowplowanalytics.mobile/application/jsonschema/1-0-0'
+
+  context_definitions:
+    contexts_com_snowplow_mobile_context_1:
+      osVersion: "context_os_version"
+      osType: "context_os_name"
+      deviceManufacturer: "context_device_manufacturer"
+      deviceModel: "context_device_model"
+    contexts_com_snowplow_application_1:
+      build: "context_app_build"
+      version: "context_app_version"
 
   include_sources:
     - ask_pastor_john
     - production_desiring_god_website
+
   use_explicit_columns: true # Set to false to select all cols in superset of sources
+
+  event_rename_map:
+    page_view:
+      - 'PAGES'
+      - 'SCREENS'
+    link_click:
+      - 'ACCOUNT_CLICK'
+      - 'BANNER_CLICK'
+      - 'BOOK_CLICK'
+      - 'BROWSE_CLICK'
+    button_click:
+      - 'ASK_A_QUESTION_CLICKED'
+      - 'SHARE_CLICKED'
+      - 'DOWNLOAD_BOOK_ACTION_CLICK'
+    form_submission:
+      - 'EMAIL_FORM_SUBMIT'
+      - 'LOGIN_FORM_SUBMIT'
+    app_lifecycle:
+      - 'APPLICATION_INSTALLED'
+      - 'APPLICATION_OPENED'
+      - 'APPLICATION_UPDATED'

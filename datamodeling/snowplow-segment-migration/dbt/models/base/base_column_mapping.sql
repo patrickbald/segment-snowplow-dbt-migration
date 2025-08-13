@@ -4,25 +4,32 @@
   Define the standard column mappings.
 -#}
 {%- set column_rename_map = {
-    "domain_userid":    "anonymous_id",
-    "event_id":         "id",
-    "userid":           "user_id",
+    "domain_userid": "anonymous_id",
+    "event_id": "id",
+    "userid": "user_id",
     "collector_tstamp": "received_at",
-    "page_url":         ["page_url", "url", "context_page_url"],
-    "event":            ["event_text", "event"]
+    "br_lang": "context_locale",
+    "derived_timestamp": "timestamp",
+    "original_timestamp": "dvce_created_tstamp",
+    "dvce_screenheight": 'context_screen_height',
+    "dvce_screenwidth": "context_screen_width",
+    "dvce_sent_tstamp": "sent_at",
+    "event_vendor": "context_app_namespace",
+    "name_tracker": "context_library_name",
+    "os_timezone": "context_timezone",
+    "user_ipaddress": "context_ip",
+    "useragent": "context_user_agent",
+    "v_tracker": "context_library_verison",
+    "page_title": ["context_page_title", "title"],
+    "page_url": ["context_page_url", "page_url"],
+    "page_urlpath": ["context_page_path", "page_path"],
+    "page_referrer": ["context_page_referrer", "page_referrer"],
+    "br_cookies": ["browser_cookies_enabled", "broweser_cookies_enabled_yn"],
+    "page_url": ["page_url", "url", "context_page_url"],
+    "event": ["event_text", "event"]
 } -%}
 
-{#-
-  Define context mappings.
--#}
-{%- set context_definitions = {
-    "mobile_context": {
-        "osVersion": "context_os_version",
-        "osType": "context_os_name",
-        "deviceManufacturer": "context_device_manufacturer",
-        "deviceModel": "context_device_model"
-    }
-} -%}
+{%- set context_definitions = var('context_definitions', {}) -%}
 
 {#- Get the include/exclude lists from the project vars -#}
 {%- set include_list = var('include_sources', []) -%}
