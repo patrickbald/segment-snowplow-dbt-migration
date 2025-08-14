@@ -1,6 +1,6 @@
 -- macros/staging_logic.sql
 
-{% macro union_sources_with_renaming(relations, column_map, context_definitions, select_mode='explicit') %}
+{% macro union_sources_with_renaming(relations, column_map, context_definitions, select_mode='all') %}
 
     {#-================================================================================================================-#}
     {#-  STEP 1: Build the master "superset" of all columns and identify handled columns.                           -#}
@@ -59,7 +59,7 @@
                 {% else %}
                     {%- if source_val.lower() in relation_cols_lower -%} {{ adapter.quote(source_val) }} {%- else -%} NULL {%- endif -%}
                 {% endif %}
-                AS {{ adapter.quote(target_col) }},
+                AS {{ target_col }},
             {%- endfor %}
 
             {#-- Create a JSON object for each defined context --#}
@@ -70,7 +70,7 @@
                 '{{ target_field }}', {{ adapter.quote(source_field) }}
                 {{- ',' if not loop.last }}
                 {%- endfor -%}
-            ) AS {{ adapter.quote(column_name) }},
+            ) AS {{ column_name }},
             {%- endfor %}
 
             {#-- Include all other columns from the superset --#}
@@ -79,7 +79,7 @@
                 {%- if col_name in relation_cols_lower -%}
                 {{ adapter.quote(col_name) }}
                 {%- else -%}
-                NULL AS {{ adapter.quote(col_name) }}
+                NULL AS {{ col_name }}
                 {%- endif -%}
                 {{- ",\n" if not loop.last }}
             {%- endfor %}
