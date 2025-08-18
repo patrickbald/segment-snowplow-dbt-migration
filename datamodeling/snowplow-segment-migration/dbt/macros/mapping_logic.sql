@@ -22,7 +22,7 @@
         {%- do target_cols.append(context ~ '_data') -%} 
     {%- endfor -%}
 
-    {#- Now, loop through every relation to find all possible columns -#}
+    {#- Loop through every relation to find all possible columns -#}
     {%- for relation in relations -%}
         {%- set cols = adapter.get_columns_in_relation(relation) -%}
         {%- for col in cols -%}

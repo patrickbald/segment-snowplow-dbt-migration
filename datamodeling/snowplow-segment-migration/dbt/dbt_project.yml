@@ -86,9 +86,9 @@ vars:
 
   event_rename_map:
     page_view:
-      - '%pages'
+      - '%PAGES'
     screen_view:
-      - '%screens'
+      - '%SCREENS'
     link_click:
       - '%ACCOUNT_CLICK'
       - '%BANNER_CLICK'

@@ -8,7 +8,7 @@ WITH unioned_events AS (
 )
 
 SELECT
-    -- 1. Select the final, correctly-named Snowplow atomic event columns directly
+    -- Grab explicit Snowplow cols
     EVENT_ID
     ,USERID
     ,DOMAIN_USERID
@@ -31,7 +31,7 @@ SELECT
     ,NAME_TRACKER
     ,V_TRACKER
     
-    -- 2. Keep the original event name for reference, and create the final event name
+    -- Reclassify events based on map in dbt project
     ,EVENT AS original_event_name
     ,CASE
         {% for snowplow_event, relation_patterns in source_relation_event_map.items() %}
@@ -46,7 +46,7 @@ SELECT
         ELSE EVENT
     END as event
 
-    -- 3. Dynamically create a separate column for each context
+    -- Create a separate column for each context
     {% for context_var_name, context_map in context_definitions.items() %}
     {%- set data_column = (context_var_name ~ '_data') | upper -%}
     ,ARRAY_CONSTRUCT_COMPACT(
@@ -61,7 +61,6 @@ SELECT
     ) AS "{{ context_var_name }}"
     {% endfor %}
 
-    -- 4. Pass through any other columns for final analysis or auditing
     ,SOURCE_RELATION
 
 FROM unioned_events
