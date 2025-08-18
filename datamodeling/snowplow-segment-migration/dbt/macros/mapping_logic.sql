@@ -36,8 +36,7 @@
     {% for relation in relations %}
     (
         SELECT
-            '{{ relation.source_name | lower }}.{{ relation.name | lower }}' as source_relation,
-
+            '{{ relation.schema | lower }}.{{ relation.name | lower }}' as source_relation,
             {#-- Get the columns for the CURRENT relation being processed --#}
             {%- set relation_cols_lower = adapter.get_columns_in_relation(relation) | map(attribute='name') | map('lower') | list -%}
 
