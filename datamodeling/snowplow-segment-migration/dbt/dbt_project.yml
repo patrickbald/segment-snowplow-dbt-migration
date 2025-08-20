@@ -45,6 +45,7 @@ vars:
   contexts_com_snowplowanalytics_mobile_application_1: 'iglu:com.snowplowanalytics.mobile/application/jsonschema/1-0-0'
 
   column_rename_map:
+    app_id: 'context_app_name'
     domain_userid: 'anonymous_id'
     event_id: 'id'
     userid: 'user_id'
@@ -53,23 +54,23 @@ vars:
     br_cookies: 'browser_cookie_enabled'
     derived_tstamp: 'timestamp'
     dvce_created_tstamp: 'original_timestamp'
-    dvce_screenheight: 'context_screen_height'
-    dvce_screenwidth: 'context_screen_width'
+    dvce_screenheight: ['context_screen_height', 'screen_height']
+    dvce_screenwidth: ['context_screen_width', 'screen_width']
     dvce_sent_tstamp: 'sent_at'
     event_vendor: 'context_app_namespace'
     name_tracker: 'context_library_name'
     os_timezone: 'context_timezone'
     user_ipaddress: 'context_ip'
-    useragent: 'context_user_agent'
+    useragent: ['context_user_agent', 'user_agent']
     v_tracker: 'context_library_version'
     mkt_content: 'context_campaign_content'
-    mkt_medium: 'context_campaign_medium'
-    mkt_name: 'context_campaign_campaign_name'
+    mkt_medium: ['context_campaign_medium', 'context_campaign_campaign_medium', 'context_campaign_utm_medium']
+    mkt_name: ['context_campaign_campaign_name', 'context_campaign_name']
     mkt_term: ['context_campaign_term', 'context_campaign_utm_term']
     mkt_source: ['context_campaign_source', 'context_campaign_utm_source', 'context_campaign_content_source']
     mkt_campaign: ['context_campaign_utm_campaign', 'context_campaign_campaign']
-    page_title: ['context_page_title', 'title']
-    page_urlpath: ['context_page_path', 'path']
+    page_title: ['context_page_title', 'title', 'page_title']
+    page_urlpath: ['context_page_path', 'path', 'page_path']
     page_referrer: ['context_page_referrer', 'referrer']
     page_url: ['page_url', 'url', 'context_page_url']
     event: ['event_text', 'event', 'name']
