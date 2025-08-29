@@ -116,56 +116,16 @@ include_sources:
 
 ### Scaling Strategy
 
-**Step 1: Add Mobile Sources (Low Risk)**
+**Step 1: Add additional sources**
 ```yaml
 include_sources:
   - ask_pastor_john
   - production_desiring_god_website
-  - ask_pastor_john_ios      # Add iOS version
-  - solid_joys_android       # Add mobile apps
+  - ask_pastor_john_ios       
+  - solid_joys_android       
   - solid_joys_ios
   - sermon_of_the_day_android
   - sermon_of_the_day_ios
-```
-
-**Validation Query for Mobile Sources:**
-```sql
--- Test mobile context population
-SELECT 
-    source_relation,
-    COUNT(*) as row_count,
-    COUNT(CASE WHEN contexts_com_snowplowanalytics_mobile_context_1 != PARSE_JSON('[]') THEN 1 END) as mobile_contexts,
-    COUNT(CASE WHEN contexts_com_snowplowanalytics_mobile_application_1 != PARSE_JSON('[]') THEN 1 END) as app_contexts
-FROM final_column_mapping
-WHERE source_relation LIKE '%ios%' OR source_relation LIKE '%android%'
-GROUP BY 1
-ORDER BY 1;
-```
-
-**Step 2: Add Hub Source (Medium Risk)**
-```yaml
-include_sources:
-  - ask_pastor_john
-  - production_desiring_god_website
-  - ask_pastor_john_ios
-  - solid_joys_android
-  - solid_joys_ios
-  - sermon_of_the_day_android
-  - sermon_of_the_day_ios
-  - hub                      # Add hub data
-```
-
-**Hub-Specific Validation:**
-```sql
--- Test subscription/gift event handling
-SELECT 
-    source_relation,
-    event,
-    COUNT(*) as count
-FROM final_column_mapping
-WHERE source_relation LIKE '%hub%'
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC;
 ```
 
 **Step 3: Full Production Scale**
