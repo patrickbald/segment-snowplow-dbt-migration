@@ -1,9 +1,15 @@
 -- models/base/base_column_mapping.sql
 
 {%- set column_rename_map = var('column_rename_map', {}) -%}
-{%- set context_definitions = var('context_definitions', {}) -%}
+{%- set snowplow_context_definitions = var('snowplow_context_definitions', {}) -%}
+{%- set custom_context_definitions = var('custom_context_definitions', {}) -%}
 {%- set include_list = var('include_sources', []) -%}
 {%- set exclude_list = var('exclude_sources', []) -%}
+
+{#- Combine both context definition types -#}
+{%- set all_context_definitions = {} -%}
+{%- do all_context_definitions.update(snowplow_context_definitions) -%}
+{%- do all_context_definitions.update(custom_context_definitions) -%}
 
 {#- Get a list of all source relations and apply the filtering logic -#}
 {%- set all_sources = [] -%}
@@ -18,7 +24,7 @@
 
 {%- endfor -%}
 
-{%- if var('use_explicit_columns', false) -%}
+{%- if var('use_explicit_columns', true) -%}
     {%- set select_mode = 'explicit' -%}
 {%- else -%}
     {%- set select_mode = 'all' -%}
@@ -28,6 +34,6 @@
 {{ union_sources_with_renaming(
     relations=all_sources,
     column_map=column_rename_map,
-    context_definitions=context_definitions,
+    context_definitions=all_context_definitions,
     select_mode=select_mode
 ) }}

@@ -42,22 +42,22 @@
 
             {#-- Handle the standard renames and coalesces --#}
             {%- for target_col, source_val in column_map.items() -%}
-                {% if source_val is iterable and source_val is not string %}
-                    {% set existing_cols = [] %}
-                    {% for col in source_val if col.lower() in relation_cols_lower %}
-                        {% do existing_cols.append(col) %}
-                    {% endfor %}
+                {%- if source_val is iterable and source_val is not string -%}
+                    {%- set existing_cols = [] -%}
+                    {%- for col in source_val if col.lower() in relation_cols_lower -%}
+                        {%- do existing_cols.append(col) -%}
+                    {%- endfor -%}
 
-                    {% if existing_cols | length > 1 %}
+                    {%- if existing_cols | length > 1 -%}
                         COALESCE( {%- for col in existing_cols -%} {{ adapter.quote(col) }} {{- ',' if not loop.last }} {%- endfor -%} )
-                    {% elif existing_cols | length == 1 %}
+                    {%- elif existing_cols | length == 1 -%}
                         {{ adapter.quote(existing_cols[0]) }}
-                    {% else %}
+                    {%- else -%}
                         NULL
-                    {% endif %}
-                {% else %}
+                    {%- endif -%}
+                {%- else -%}
                     {%- if source_val.lower() in relation_cols_lower -%} {{ adapter.quote(source_val) }} {%- else -%} NULL {%- endif -%}
-                {% endif %}
+                {%- endif %}
                 AS {{ target_col }},
             {%- endfor %}
 

@@ -1,7 +1,8 @@
 {#- Get the event mapping dictionaries from the project vars -#}
 {%- set source_relation_event_map = var('event_rename_map', {}) -%}
-{%- set context_definitions = var('context_definitions', {}) -%}
-
+{%- set snowplow_context_definitions = var('snowplow_context_definitions', {}) -%}
+{%- set custom_context_definitions = var('custom_context_definitions', {}) -%}
+{%- set snowplow_context_column_urls = var('snowplow_context_column_urls', {}) -%}
 
 WITH unioned_events AS (
     SELECT * FROM {{ ref('base_column_mapping') }}
@@ -46,20 +47,26 @@ SELECT
         ELSE EVENT
     END as event
 
-    -- Create a separate column for each context
-    {% for context_var_name, context_map in context_definitions.items() %}
+    -- Create Snowplow contexts from Segment data
+    {% for context_var_name, context_map in snowplow_context_definitions.items() %}
     {%- set data_column = (context_var_name ~ '_data') | upper -%}
+    {%- set schema_url = snowplow_context_column_urls['contexts_com_snowplowanalytics_snowplow_' ~ context_var_name ~ '_1'] or snowplow_context_column_urls['contexts_com_snowplowanalytics_mobile_' ~ context_var_name ~ '_1'] -%}
     ,ARRAY_CONSTRUCT_COMPACT(
         IFF(
             {{ data_column }} IS NOT NULL AND {{ data_column }} != PARSE_JSON('{}'),
             OBJECT_CONSTRUCT(
-                'schema', '{{ var(context_var_name) }}',
+                'schema', '{{ schema_url }}',
                 'data', {{ data_column }}
             ),
             NULL
         )
-    ) AS "{{ context_var_name }}"
+    ) AS {{ ('contexts_com_snowplowanalytics_' ~ context_var_name ~ '_1') | upper }}
     {% endfor %}
+
+
+
+    -- Apply custom contexts using the macro
+    {{ apply_custom_contexts() }}
 
     ,SOURCE_RELATION
 
