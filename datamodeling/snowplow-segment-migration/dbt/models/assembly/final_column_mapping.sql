@@ -32,6 +32,9 @@ SELECT
     ,NAME_TRACKER
     ,V_TRACKER
     
+    -- Set the app_id based on the source relation mapping
+    ,{{ set_app_id() }}
+    
     -- Reclassify events based on map in dbt project
     ,EVENT AS original_event_name
     ,CASE
@@ -62,8 +65,6 @@ SELECT
         )
     ) AS {{ ('contexts_com_snowplowanalytics_' ~ context_var_name ~ '_1') | upper }}
     {% endfor %}
-
-
 
     -- Apply custom contexts using the macro
     {{ apply_custom_contexts() }}

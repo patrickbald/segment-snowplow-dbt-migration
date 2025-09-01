@@ -68,6 +68,17 @@ vars:
 
   use_explicit_columns: true # Set to false to select all cols in superset of sources
 
+  app_id_mapping:
+    production_desiring_god_website: 'www-rails'
+    ruby_production_desiring_god_website: 'www-rails'
+    hub: 'api'
+    ask_pastor_john: 'apj_android'
+    ask_pastor_john_ios: 'apj_ios'
+    sermon_of_the_day_android: 'sotd_android'
+    sermon_of_the_day_ios: 'sotd_ios'
+    solid_joys_android: 'sj_android'
+    solid_joys_ios: 'sj_ios'
+
   column_rename_map:
     app_id: 'context_app_name'
     domain_userid: 'anonymous_id'
