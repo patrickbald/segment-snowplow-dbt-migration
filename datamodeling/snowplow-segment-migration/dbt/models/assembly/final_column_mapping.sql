@@ -2,7 +2,7 @@
 {%- set source_relation_event_map = var('event_rename_map', {}) -%}
 {%- set snowplow_context_definitions = var('snowplow_context_definitions', {}) -%}
 {%- set custom_context_definitions = var('custom_context_definitions', {}) -%}
-{%- set snowplow_context_column_urls = var('snowplow_context_column_urls', {}) -%}
+{%- set snowplow_context_schemas = var('snowplow_context_schemas', {}) -%}
 
 WITH unioned_events AS (
     SELECT * FROM {{ ref('base_column_mapping') }}
@@ -53,7 +53,7 @@ SELECT
     -- Create Snowplow contexts from Segment data
     {% for context_var_name, context_map in snowplow_context_definitions.items() %}
     {%- set data_column = (context_var_name ~ '_data') | upper -%}
-    {%- set schema_url = snowplow_context_column_urls['contexts_com_snowplowanalytics_snowplow_' ~ context_var_name ~ '_1'] or snowplow_context_column_urls['contexts_com_snowplowanalytics_mobile_' ~ context_var_name ~ '_1'] -%}
+    {%- set schema_url = snowplow_context_schemas.get(context_var_name, '') -%}
     ,ARRAY_CONSTRUCT_COMPACT(
         IFF(
             {{ data_column }} IS NOT NULL AND {{ data_column }} != PARSE_JSON('{}'),
