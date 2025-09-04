@@ -83,7 +83,7 @@ vars:
     app_id: 'context_app_name'
     domain_userid: 'anonymous_id'
     event_id: 'id'
-    userid: 'user_id'
+    user_id: 'user_id'
     collector_tstamp: 'received_at'
     br_lang: 'context_locale'
     br_cookies: 'browser_cookie_enabled'

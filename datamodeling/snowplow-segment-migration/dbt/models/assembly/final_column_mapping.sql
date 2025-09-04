@@ -11,7 +11,7 @@ WITH unioned_events AS (
 SELECT
     -- Grab explicit Snowplow cols
     EVENT_ID
-    ,USERID
+    ,USER_ID
     ,DOMAIN_USERID
     ,COLLECTOR_TSTAMP
     ,DERIVED_TSTAMP
@@ -48,7 +48,7 @@ SELECT
         THEN '{{ snowplow_event }}'
         {% endfor %}
         ELSE EVENT
-    END as event
+    END as EVENT_NAME
 
     -- Create Snowplow contexts from Segment data
     {% for context_var_name, context_map in snowplow_context_definitions.items() %}
