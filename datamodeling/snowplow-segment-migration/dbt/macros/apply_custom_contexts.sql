@@ -17,11 +17,9 @@
             NULL
         )
     ) AS {{ ('contexts_com_desiringgod_' ~ context_var_name ~ '_1') | upper }}
-    {%- endfor -%}
-    
+    {% endfor %}
     {#- Then handle event-based custom contexts from mappings -#}
-    {%- for context_name, schema_url in custom_context_schemas.items() -%}
-    {#- IMPORTANT: Skip contexts already handled by definitions -#}
+    {% for context_name, schema_url in custom_context_schemas.items() %}
     {%- if context_name not in custom_context_definitions -%}
     {%- set target_context_type = context_name ~ '_context' -%}
     
@@ -35,7 +33,6 @@
             {%- endif -%}
         {%- endfor -%}
     {%- endfor -%}
-    
     ,ARRAY_CONSTRUCT_COMPACT(
         {%- if when_clauses | length > 0 %}
         CASE 
@@ -48,7 +45,6 @@
         NULL
         {%- endif %}
     ) AS {{ ('contexts_com_desiringgod_' ~ context_name ~ '_1') | upper }}
-    {%- endif -%}  {#- End of skip check -#}
-    {%- endfor -%}
-
+    {%- endif -%}
+    {% endfor %}
 {% endmacro %}

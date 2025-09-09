@@ -83,7 +83,7 @@ vars:
     app_id: 'context_app_name'
     domain_userid: 'anonymous_id'
     event_id: 'id'
-    user_id: 'user_id'
+    user_id: ['user_id', 'userid', 'user_testing']
     collector_tstamp: 'received_at'
     br_lang: 'context_locale'
     br_cookies: 'browser_cookie_enabled'
@@ -92,23 +92,161 @@ vars:
     dvce_screenheight: ['context_screen_height', 'screen_height']
     dvce_screenwidth: ['context_screen_width', 'screen_width']
     dvce_sent_tstamp: 'sent_at'
+    event: 'event'
     event_vendor: 'context_app_namespace'
     name_tracker: 'context_library_name'
     os_timezone: 'context_timezone'
+    page_urlquery: 'context_page_search'
     user_ipaddress: 'context_ip'
     useragent: ['context_user_agent', 'user_agent']
     v_tracker: 'context_library_version'
-    mkt_content: 'context_campaign_content'
-    mkt_medium: ['context_campaign_medium', 'context_campaign_campaign_medium', 'context_campaign_utm_medium']
+    mkt_content: [
+      'context_campaign_content',
+      'context_campaign_bycontent',
+      'context_campaign_campaig_n',
+      'context_campaign_co_ffgf_zaax6_qmbx_acf_zref_mf_abg_mswl_v7ntent',
+      'context_campaign_condrtent',
+      'context_campaign_cont1nt',
+      'context_campaign_contaent',
+      'context_campaign_contenent',
+      'context_campaign_contenguyt',
+      'context_campaign_contentbvb',
+      'context_campaign_contentn',
+      'context_campaign_contentrded',
+      'context_campaign_goocontent',
+      'context_campaign_ontent',
+      'context_campaign_tm_content',
+      'context_campaign_cyou_20tubeampaign',
+      'context_campaign_diun'
+    ]
+    mkt_medium: [
+      'context_campaign_medium',
+      'context_campaign_campaign_medium',
+      'context_campaign_utm_medium',
+      'context_campaign_utm_mediun',
+      'context_campaign_mediun',
+      'context_campaign_3butm_medium',
+      'context_campaign_diun',
+      'context_campaign_maedium',
+      'context_campaign_mdium',
+      'context_campaign_mecksondium',
+      'context_campaign_medikrogerum',
+      'context_campaign_medim',
+      'context_campaign_mediu',
+      'context_campaign_mediu_im',
+      'context_campaign_mediucm',
+      'context_campaign_mediugooglm',
+      'context_campaign_medium_20',
+      'context_campaign_medium7',
+      'context_campaign_mediumex',
+      'context_campaign_mediumi',
+      'context_campaign_mediumins',
+      'context_campaign_medrium',
+      'context_campaign_medum',
+      'context_campaign_meium',
+      'context_campaign_q_c3_a5utm_medium',
+      'context_campaign_robedium',
+      'context_campaign_sdium',
+      'context_campaign_tm_medium',
+      'context_campaign_tm_mediun',
+      'context_campaign_yamedium',
+      'context_campaign_mediufm',
+      'context_campaign_amedium'
+    ]
     mkt_name: ['context_campaign_campaign_name', 'context_campaign_name']
-    mkt_term: ['context_campaign_term', 'context_campaign_utm_term']
-    mkt_source: ['context_campaign_source', 'context_campaign_utm_source', 'context_campaign_content_source']
-    mkt_campaign: ['context_campaign_utm_campaign', 'context_campaign_campaign']
+    mkt_term: [
+      'context_campaign_term',
+      'context_campaign_utm_term',
+      'context_campaign_t_20erm',
+      'context_campaign_term_20'
+    ]
+    mkt_source: [
+      'context_campaign_source',
+      'context_campaign_utm_source',
+      'context_campaign_campaign_source',
+      'context_campaign_content_source',
+      'context_campaign_utm_content',
+      'context_campaign_3butm_source',
+      'context_campaign_med_urce',
+      'context_campaign_ource',
+      'context_campaign_romans_2012source',
+      'context_campaign_rysocuurce',
+      'context_campaign_s',
+      'context_campaign_s_cvource',
+      'context_campaign_siurce',
+      'context_campaign_so_20urce',
+      'context_campaign_so_comurce',
+      'context_campaign_so_urce',
+      'context_campaign_socheraw_20cource',
+      'context_campaign_sohurce',
+      'context_campaign_sorce',
+      'context_campaign_souce',
+      'context_campaign_sourc',
+      'context_campaign_sourc_gbe',
+      'context_campaign_source_0a',
+      'context_campaign_source_20',
+      'context_campaign_source_sc',
+      'context_campaign_sourceh',
+      'context_campaign_sourcgoo',
+      'context_campaign_sourcye',
+      'context_campaign_soure',
+      'context_campaign_surce',
+      'context_campaign_tm_source',
+      'context_campaign_utm_sourcesource'
+    ]
+    mkt_campaign: [
+      'context_campaign_utm_campaign',
+      'context_campaign_campaign',
+      'context_campaign_20campaign',
+      'context_campaign_3butm_campaign',
+      'context_campaign_3butm_medium',
+      'context_campaign_9f_a5_b0utm_campaign',
+      'context_campaign_ampaign',
+      'context_campaign_c_20ampaign',
+      'context_campaign_c_ampaign',
+      'context_campaign_c_fnbampaign',
+      'context_campaign_cacalmpaign',
+      'context_campaign_cagmpaign',
+      'context_campaign_cagrand_20rapids_20newsmpaign',
+      'context_campaign_cajohn_20mccain_20bookmpaign',
+      'context_campaign_cam_paign',
+      'context_campaign_camaign',
+      'context_campaign_camapaign',
+      'context_campaign_camfpaign',
+      'context_campaign_camoaign',
+      'context_campaign_camp_20bc_20aign',
+      'context_campaign_campa_20icky_20and_20minnie_20mouse_20go_20on_20a_20picnic_20youtubegn',
+      'context_campaign_campagn',
+      'context_campaign_campai_20gn',
+      'context_campaign_campaig',
+      'context_campaign_campaign_ce_91',
+      'context_campaign_campaigne',
+      'context_campaign_campaignp',
+      'context_campaign_campaignt',
+      'context_campaign_campaignv',
+      'context_campaign_campain',
+      'context_campaign_campaing',
+      'context_campaign_campazay_20flowers_20injuryign',
+      'context_campaign_campccfaign',
+      'context_campaign_campsaign',
+      'context_campaign_campsign',
+      'context_campaign_cazmpaign',
+      'context_campaign_cmpaign',
+      'context_campaign_cncdmvmpaign',
+      'context_campaign_compaign',
+      'context_campaign_cyou_20tubeampaign',
+      'context_campaign_jimmie_20mcnair_20brandon_20ms',
+      'context_campaign_m_content',
+      'context_campaign_majesticmusic_com',
+      'context_campaign_spiritdailyampaign',
+      'context_campaign_tm_campaign',
+      'context_campaign_co_ffgf_zaax6_qmbx_acf_zref_mf_abg_mswl_v7ntent'
+    ]
     page_title: ['context_page_title', 'title', 'page_title']
     page_urlpath: ['context_page_path', 'path', 'page_path']
     page_referrer: ['context_page_referrer', 'referrer']
     page_url: ['page_url', 'url', 'context_page_url']
-    event: ['event_text', 'event', 'name']
+    event_name: ['event_text', 'event', 'name']
 
   event_rename_map:
     page_view:

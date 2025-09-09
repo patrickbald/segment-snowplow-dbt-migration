@@ -6,6 +6,26 @@
 
 WITH unioned_events AS (
     SELECT * FROM {{ ref('base_column_mapping') }}
+),
+
+events_classified AS (
+    SELECT
+        *,
+        -- Reclassify events based on map in dbt project
+        EVENT_NAME AS original_event_name,
+        CASE
+            {% for snowplow_event, relation_patterns in source_relation_event_map.items() %}
+            WHEN (
+                {% for pattern in relation_patterns -%}
+                LOWER(SOURCE_RELATION) LIKE LOWER('{{ pattern }}')
+                {%- if not loop.last %} OR {% endif -%}
+                {% endfor %}
+            )
+            THEN '{{ snowplow_event }}'
+            {% endfor %}
+            ELSE EVENT_NAME
+        END as mapped_event_name
+    FROM unioned_events
 )
 
 SELECT
@@ -31,24 +51,27 @@ SELECT
     ,EVENT_VENDOR
     ,NAME_TRACKER
     ,V_TRACKER
+    ,MKT_CONTENT
+    ,MKT_MEDIUM
+    ,MKT_NAME
+    ,MKT_TERM
+    ,MKT_SOURCE
+    ,MKT_CAMPAIGN
+
     
     -- Set the app_id based on the source relation mapping
     ,{{ set_app_id() }}
     
-    -- Reclassify events based on map in dbt project
-    ,EVENT AS original_event_name
-    ,CASE
-        {% for snowplow_event, relation_patterns in source_relation_event_map.items() %}
-        WHEN (
-            {% for pattern in relation_patterns -%}
-            LOWER(SOURCE_RELATION) LIKE LOWER('{{ pattern }}')
-            {%- if not loop.last %} OR {% endif -%}
-            {% endfor %}
-        )
-        THEN '{{ snowplow_event }}'
-        {% endfor %}
-        ELSE EVENT
-    END as EVENT_NAME
+    -- Event name columns
+    ,original_event_name
+    ,mapped_event_name AS EVENT_NAME
+    
+    -- Add Snowplow event type classification
+    ,CASE 
+        WHEN mapped_event_name = 'page_view' THEN 'page_view'
+        WHEN mapped_event_name = 'page_ping' THEN 'page_ping'
+        ELSE 'unstruct'
+    END AS EVENT
 
     -- Create Snowplow contexts from Segment data
     {% for context_var_name, context_map in snowplow_context_definitions.items() %}
@@ -68,7 +91,6 @@ SELECT
 
     -- Apply custom contexts using the macro
     {{ apply_custom_contexts() }}
-
     ,SOURCE_RELATION
 
-FROM unioned_events
+FROM events_classified
