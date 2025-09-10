@@ -13,7 +13,6 @@ sources:
       - name: SCREENS
       - name: SEARCH_TEXT_ENTERED
       - name: SHARE_CLICKED
-      - name: TRACKS
 
   - name: ask_pastor_john_ios
     database: REDSHIFT_BACKUP
@@ -25,7 +24,6 @@ sources:
       - name: EPISODE_PLAYED
       - name: EPISODE_SHARE_CLICKED
       - name: SCREENS
-      - name: TRACKS
 
   - name: hub
     database: REDSHIFT_BACKUP
@@ -45,7 +43,6 @@ sources:
       - name: GIFT_SUBMITTED
       - name: GIFT_VOIDED
       - name: IDENTIFIES
-      - name: TRACKS
       - name: USERS
 
   - name: production_desiring_god_website
@@ -161,7 +158,6 @@ sources:
       - name: SUBSCRIBE_OUTBOUND_CLICK
       - name: SUBSCRIBE_PAGE_EMAIL_FORM_SUBMIT
       - name: SUBSCRIBE_STAND_PAGE_EMAIL_FORM_SUBMIT
-      - name: TRACKS
       - name: TRY_SEARCHING_CLICK
       - name: USERS
       - name: VILLAIN_AND_SIDEKICK_CLICK
@@ -171,7 +167,6 @@ sources:
     schema: RUBY_PRODUCTION_DESIRING_GOD_WEBSITE
     tables:
       - name: HOLY_WEEK_2025_SUBSCRIBED
-      - name: TRACKS
 
   - name: sermon_of_the_day_android
     database: REDSHIFT_BACKUP
@@ -181,7 +176,6 @@ sources:
       - name: APPLICATION_OPENED
       - name: SCREENS
       - name: SERMON_PLAYED
-      - name: TRACKS
 
   - name: sermon_of_the_day_ios
     database: REDSHIFT_BACKUP
@@ -192,7 +186,6 @@ sources:
       - name: SCREENS
       - name: SERMON_PLAYED
       - name: SERMON_SHARE_CLICKED
-      - name: TRACKS
 
   - name: solid_joys_android
     database: REDSHIFT_BACKUP
@@ -203,7 +196,6 @@ sources:
       - name: APPLICATION_OPENED
       - name: APPLICATION_UPDATED
       - name: SCREENS
-      - name: TRACKS
 
   - name: solid_joys_ios
     database: REDSHIFT_BACKUP
@@ -214,4 +206,3 @@ sources:
       - name: APPLICATION_UPDATED
       - name: DEVOTIONAL
       - name: SCREENS
-      - name: TRACKS
