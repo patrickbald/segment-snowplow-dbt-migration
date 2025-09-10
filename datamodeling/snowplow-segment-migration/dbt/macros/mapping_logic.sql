@@ -1,4 +1,4 @@
--- macros/staging_logic.sql
+-- macros/mapping_logic.sql
 
 {% macro union_sources_with_renaming(relations, column_map, context_definitions, select_mode='all') %}
 
@@ -17,8 +17,16 @@
             {%- do handled_source_cols.append(source_val) -%}
         {%- endif -%}
     {%- endfor -%}
+    
+    {#- Handle arrays in context definitions -#}
     {%- for context, context_map in context_definitions.items() -%}
-        {%- do handled_source_cols.extend(context_map.values()) -%}
+        {%- for field, source in context_map.items() -%}
+            {%- if source is iterable and source is not string -%}
+                {%- do handled_source_cols.extend(source) -%}
+            {%- else -%}
+                {%- do handled_source_cols.append(source) -%}
+            {%- endif -%}
+        {%- endfor -%}
         {%- do target_cols.append(context ~ '_data') -%} 
     {%- endfor -%}
 
@@ -38,7 +46,11 @@
         SELECT
             '{{ relation.schema | lower }}.{{ relation.name | lower }}' as source_relation,
             {#-- Get the columns for the CURRENT relation being processed --#}
-            {%- set relation_cols_lower = adapter.get_columns_in_relation(relation) | map(attribute='name') | map('lower') | list -%}
+            {%- set relation_cols = adapter.get_columns_in_relation(relation) -%}
+            {%- set relation_cols_lower = [] -%}
+            {%- for col in relation_cols -%}
+                {%- do relation_cols_lower.append(col.name.lower()) -%}
+            {%- endfor -%}
 
             {#-- Handle the standard renames and coalesces --#}
             {%- for target_col, source_val in column_map.items() -%}
@@ -65,10 +77,36 @@
             {%- for context_var_name, context_map in context_definitions.items() -%}
             {%- set column_name = context_var_name ~ '_data' -%}
             OBJECT_CONSTRUCT(
-                {%- for target_field, source_field in context_map.items() if source_field.lower() in relation_cols_lower -%}
-                '{{ target_field }}', {{ adapter.quote(source_field) }}
-                {{- ',' if not loop.last }}
+                {%- set field_pairs = [] -%}
+                {%- for target_field, source_field in context_map.items() -%}
+                    {%- if source_field is iterable and source_field is not string -%}
+                        {#- Handle multiple possible source columns -#}
+                        {%- set existing_cols = [] -%}
+                        {%- for col in source_field if col.lower() in relation_cols_lower -%}
+                            {%- do existing_cols.append(col) -%}
+                        {%- endfor -%}
+                        
+                        {%- if existing_cols | length > 0 -%}
+                            {%- if existing_cols | length > 1 -%}
+                                {%- set coalesce_expr = "COALESCE(" ~ existing_cols | map('tojson') | join(', ') ~ ")" -%}
+                                {%- do field_pairs.append("'" ~ target_field ~ "', " ~ coalesce_expr) -%}
+                            {%- else -%}
+                                {%- do field_pairs.append("'" ~ target_field ~ "', " ~ adapter.quote(existing_cols[0])) -%}
+                            {%- endif -%}
+                        {%- endif -%}
+                    {%- else -%}
+                        {#- Handle single source column -#}
+                        {%- set source_normalized = source_field.lower().strip('"').strip("'") -%}
+                        {%- if source_normalized in relation_cols_lower -%}
+                            {%- do field_pairs.append("'" ~ target_field ~ "', " ~ adapter.quote(source_field)) -%}
+                        {%- endif -%}
+                    {%- endif -%}
                 {%- endfor -%}
+                
+                {#- Output the field pairs -#}
+                {%- if field_pairs | length > 0 -%}
+                    {{ field_pairs | join(', ') }}
+                {%- endif -%}
             ) AS {{ column_name }},
             {%- endfor %}
 
