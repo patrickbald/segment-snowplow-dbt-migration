@@ -91,7 +91,6 @@ sources:
       - name: FOOTER_EMAIL_UPDATES_FORM_SUBMIT
       - name: FOOTER_LEARN_MORE_CLICK
       - name: HEADER_NAVIGATION_CLICK
-      - name: HELLO
       - name: HERE_WE_STAND_EMAIL_FORM_SUBMIT
       - name: HERE_WE_STAND_INVITE_OTHERS_SHARE_CLICK
       - name: HERE_WE_STAND_I_TUNES_CLICK
@@ -110,7 +109,6 @@ sources:
       - name: MAIN_MENU_OPEN_CLICK
       - name: MORE_RESOURCES_CLICK
       - name: NEXT_LAB_CLICK
-      - name: OPOPVQVQVQVQ
       - name: PAGES
       - name: PLAY_CLICK
       - name: PREVIOUS_LAB_CLICK
