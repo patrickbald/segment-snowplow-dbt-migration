@@ -7,6 +7,23 @@
     {%- for context_var_name, context_map in custom_context_definitions.items() -%}
     {%- set data_column = (context_var_name ~ '_data') | upper -%}
     {%- set schema_url = custom_context_schemas.get(context_var_name, '') -%}
+    
+    {%- if context_var_name == 'resource' -%}
+    {#- Special handling for resource context - only include if resource_id exists -#}
+    ,ARRAY_CONSTRUCT_COMPACT(
+        IFF(
+            {{ data_column }} IS NOT NULL 
+            AND {{ data_column }} != PARSE_JSON('{}')
+            AND {{ data_column }}:resource_id IS NOT NULL,  -- Added check for resource_id
+            OBJECT_CONSTRUCT(
+                'schema', '{{ schema_url }}',
+                'data', {{ data_column }}
+            ),
+            NULL
+        )
+    ) AS {{ ('contexts_com_desiringgod_' ~ context_var_name ~ '_1') | upper }}
+    {%- else -%}
+    {#- Normal handling for other column-based contexts -#}
     ,ARRAY_CONSTRUCT_COMPACT(
         IFF(
             {{ data_column }} IS NOT NULL AND {{ data_column }} != PARSE_JSON('{}'),
@@ -17,7 +34,9 @@
             NULL
         )
     ) AS {{ ('contexts_com_desiringgod_' ~ context_var_name ~ '_1') | upper }}
+    {%- endif -%}
     {% endfor %}
+    
     {#- Then handle event-based custom contexts from mappings -#}
     {% for context_name, schema_url in custom_context_schemas.items() %}
     {%- if context_name not in custom_context_definitions -%}
