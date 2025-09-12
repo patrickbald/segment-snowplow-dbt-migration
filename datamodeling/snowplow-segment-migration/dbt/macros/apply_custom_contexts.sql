@@ -9,7 +9,7 @@
     {%- set schema_url = custom_context_schemas.get(context_var_name, '') -%}
     
     {%- if context_var_name == 'resource' -%}
-    {#- Special handling for resource context - only include if resource_id exists -#}
+    {#- Special handling for resource context - clean title and only include if resource_id exists -#}
     ,ARRAY_CONSTRUCT_COMPACT(
         IFF(
             {{ data_column }} IS NOT NULL 
@@ -17,7 +17,18 @@
             AND {{ data_column }}:resource_id IS NOT NULL,  -- Added check for resource_id
             OBJECT_CONSTRUCT(
                 'schema', '{{ schema_url }}',
-                'data', {{ data_column }}
+                'data', OBJECT_INSERT(
+                    {{ data_column }},
+                    'resource_title',
+                    TRIM(
+                        REPLACE(
+                            COALESCE({{ data_column }}:resource_title::STRING, ''),
+                            '| Desiring God',
+                            ''
+                        )
+                    ),
+                    TRUE  -- Update if exists
+                )
             ),
             NULL
         )
