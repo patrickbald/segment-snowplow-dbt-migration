@@ -1,5 +1,4 @@
 {#- Get the event mapping dictionaries from the project vars -#}
-{%- set source_relation_event_map = var('event_rename_map', {}) -%}
 {%- set snowplow_context_definitions = var('snowplow_context_definitions', {}) -%}
 {%- set custom_context_definitions = var('custom_context_definitions', {}) -%}
 {%- set snowplow_context_schemas = var('snowplow_context_schemas', {}) -%}
@@ -8,24 +7,47 @@ WITH unioned_events AS (
     SELECT * FROM {{ ref('base_column_mapping') }}
 ),
 
+event_mappings AS (
+    SELECT 
+        snowplow_event,
+        source_pattern,
+        pattern_type,
+        priority
+    FROM SEGMENT_MIGRATION_TESTING.MAPPINGS.event_rename_mapping
+    WHERE is_active = TRUE
+),
+
+events_with_mappings AS (
+    SELECT 
+        u.*,
+        em.snowplow_event AS mapping_snowplow_event,
+        em.priority,
+        ROW_NUMBER() OVER (
+            PARTITION BY u.EVENT_ID 
+            ORDER BY em.priority ASC, em.source_pattern
+        ) as rn
+    FROM unioned_events u
+    LEFT JOIN event_mappings em
+        ON CASE 
+            WHEN em.pattern_type = 'LIKE' THEN 
+                LOWER(u.SOURCE_RELATION) LIKE LOWER(em.source_pattern)
+            WHEN em.pattern_type = 'EXACT' THEN 
+                LOWER(u.SOURCE_RELATION) = LOWER(em.source_pattern)
+            ELSE FALSE
+        END
+),
+
 events_classified AS (
     SELECT
         *,
-        -- Reclassify events based on map in dbt project
+        -- Reclassify events based on map in table
         EVENT_NAME AS original_event_name,
-        CASE
-            {% for snowplow_event, relation_patterns in source_relation_event_map.items() %}
-            WHEN (
-                {% for pattern in relation_patterns -%}
-                LOWER(SOURCE_RELATION) LIKE LOWER('{{ pattern }}')
-                {%- if not loop.last %} OR {% endif -%}
-                {% endfor %}
-            )
-            THEN '{{ snowplow_event }}'
-            {% endfor %}
-            ELSE EVENT_NAME
-        END as mapped_event_name
-    FROM unioned_events
+        COALESCE(
+            CASE WHEN rn = 1 THEN mapping_snowplow_event ELSE NULL END,
+            EVENT_NAME
+        ) AS mapped_event_name
+    FROM events_with_mappings
+    WHERE rn = 1 OR mapping_snowplow_event IS NULL
 )
 
 SELECT
