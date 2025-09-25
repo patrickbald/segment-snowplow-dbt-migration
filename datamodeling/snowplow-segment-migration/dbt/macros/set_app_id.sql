@@ -8,5 +8,4 @@
         {%- endfor %}
         ELSE COALESCE(APP_ID, 'unknown')
     END AS app_id
-    
 {% endmacro %}
