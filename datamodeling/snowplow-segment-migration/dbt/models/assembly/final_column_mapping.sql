@@ -190,7 +190,7 @@ SELECT
             COALESCE(static_ui_element_data, conditional_ui_element_data) IS NOT NULL,
             OBJECT_CONSTRUCT(
                 'schema', '{{ custom_context_schemas.ui_element }}',
-                'data', COALESCE(conditional_ui_element_data, static_ui_element_data[0])
+                'data', COALESCE(conditional_ui_element_data, static_ui_element_data)
             ),
             NULL
         )
@@ -202,7 +202,7 @@ SELECT
             COALESCE(static_email_list_data, conditional_email_list_data) IS NOT NULL,
             OBJECT_CONSTRUCT(
                 'schema', '{{ custom_context_schemas.email_list }}',
-                'data', COALESCE(conditional_email_list_data, static_email_list_data[0])
+                'data', COALESCE(conditional_email_list_data, static_email_list_data)
             ),
             NULL
         )
@@ -215,7 +215,7 @@ SELECT
             static_resource_data IS NOT NULL,
             OBJECT_CONSTRUCT(
                 'schema', '{{ custom_context_schemas.resource }}',
-                'data', static_resource_data[0]
+                'data', static_resource_data
             ),
             -- Otherwise use column-based resource context
             IFF(
