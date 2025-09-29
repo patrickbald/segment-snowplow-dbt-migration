@@ -60,7 +60,7 @@ vars:
   custom_context_definitions:
     resource:
       resource_id: 'resource_id'
-      resource_title: ['context_page_title', 'title', 'page_title', 'book_name']
+      resource_title: ['book_name', 'context_page_title', 'title', 'page_title']
 
   include_sources:
     - ask_pastor_john
