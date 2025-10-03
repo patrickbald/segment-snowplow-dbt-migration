@@ -27,15 +27,20 @@ static_contexts AS (
     WHERE is_active = TRUE
 ),
 
--- Conditional context mappings
-conditional_contexts AS (
+-- Conditional context mappings with ROW_NUMBER to handle duplicates
+conditional_contexts_ranked AS (
     SELECT 
         LOWER(table_schema || '.' || table_name) as source_pattern,
         context_type,
         condition_field,
         condition_operator,
         condition_value,
-        context_data
+        context_data,
+        -- Add row number to pick first matching condition
+        ROW_NUMBER() OVER (
+            PARTITION BY LOWER(table_schema || '.' || table_name), context_type
+            ORDER BY table_schema, table_name  -- Add any preferred ordering here
+        ) as rn
     FROM SEGMENT_MIGRATION_TESTING.MAPPINGS.custom_context_conditional_mappings
     WHERE is_active = TRUE
 ),
@@ -72,7 +77,7 @@ events_classified AS (
     WHERE rn = 1 OR mapping_snowplow_event IS NULL
 ),
 
--- Join with context mappings
+-- Join with context mappings and apply conditions in SELECT
 events_with_contexts AS (
     SELECT 
         e.*,
@@ -86,20 +91,35 @@ events_with_contexts AS (
         -- Static Resource contexts (for C&C events)
         sc_resource.context_data as static_resource_data,
         
-        -- Conditional UI Element contexts
-        CASE
-            WHEN cc_ui.condition_operator = 'IS NULL' AND e.RESOURCE_SERIES IS NULL THEN cc_ui.context_data
-            WHEN cc_ui.condition_field = 'podcast_name' AND e.PODCAST_NAME = cc_ui.condition_value THEN cc_ui.context_data
-            WHEN cc_ui.condition_field = 'social_channel_navigated_to' AND e.SOCIAL_CHANNEL_NAVIGATED_TO = cc_ui.condition_value THEN cc_ui.context_data
-            WHEN cc_ui.condition_field = 'resource_series' AND e.RESOURCE_SERIES = cc_ui.condition_value THEN cc_ui.context_data
-            ELSE NULL
-        END as conditional_ui_element_data,
+        -- Conditional UI Element contexts - use FIRST_VALUE to get first match
+        FIRST_VALUE(
+            CASE
+                WHEN cc_ui.condition_operator = 'IS NULL' AND e.RESOURCE_SERIES IS NULL THEN cc_ui.context_data
+                WHEN cc_ui.condition_field = 'podcast_name' AND e.PODCAST_NAME = cc_ui.condition_value THEN cc_ui.context_data
+                WHEN cc_ui.condition_field = 'social_channel_navigated_to' AND e.SOCIAL_CHANNEL_NAVIGATED_TO = cc_ui.condition_value THEN cc_ui.context_data
+                WHEN cc_ui.condition_field = 'resource_series' AND e.RESOURCE_SERIES = cc_ui.condition_value THEN cc_ui.context_data
+                ELSE NULL
+            END
+        ) OVER (
+            PARTITION BY e.EVENT_ID 
+            ORDER BY cc_ui.rn
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) as conditional_ui_element_data,
         
-        -- Conditional Email List contexts
-        CASE
-            WHEN cc_email.condition_field = 'mailing_list' AND e.MAILING_LIST = cc_email.condition_value THEN cc_email.context_data
-            ELSE NULL
-        END as conditional_email_list_data
+        -- Conditional Email List contexts - use FIRST_VALUE to get first match
+        FIRST_VALUE(
+            CASE
+                WHEN cc_email.condition_field = 'mailing_list' AND e.MAILING_LIST = cc_email.condition_value THEN cc_email.context_data
+                ELSE NULL
+            END
+        ) OVER (
+            PARTITION BY e.EVENT_ID 
+            ORDER BY cc_email.rn
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) as conditional_email_list_data,
+        
+        -- Add row number to deduplicate
+        ROW_NUMBER() OVER (PARTITION BY e.EVENT_ID ORDER BY cc_ui.rn, cc_email.rn) as context_rn
         
     FROM events_classified e
     
@@ -116,14 +136,20 @@ events_with_contexts AS (
         ON LOWER(e.SOURCE_RELATION) = sc_resource.source_pattern
         AND sc_resource.context_type = 'resource'
     
-    -- Simplified conditional context joins (CASE statements handle the conditions)
-    LEFT JOIN conditional_contexts cc_ui
+    -- Conditional context joins (using ranked version)
+    LEFT JOIN conditional_contexts_ranked cc_ui
         ON LOWER(e.SOURCE_RELATION) = cc_ui.source_pattern
         AND cc_ui.context_type = 'ui_element'
     
-    LEFT JOIN conditional_contexts cc_email
+    LEFT JOIN conditional_contexts_ranked cc_email
         ON LOWER(e.SOURCE_RELATION) = cc_email.source_pattern
         AND cc_email.context_type = 'email_list'
+),
+
+-- Deduplicated events
+deduplicated_events AS (
+    SELECT * FROM events_with_contexts
+    WHERE context_rn = 1  -- Keep only one row per event_id
 )
 
 SELECT
@@ -238,4 +264,4 @@ SELECT
     
     ,SOURCE_RELATION
 
-FROM events_with_contexts
+FROM deduplicated_events
