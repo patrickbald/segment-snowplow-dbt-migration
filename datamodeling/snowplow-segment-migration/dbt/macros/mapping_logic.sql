@@ -125,7 +125,7 @@
         FROM {{ relation }}
 
         {% if target.name == 'dev' %}
-        LIMIT 100
+        LIMIT 10000
         {% endif %}
     )
 

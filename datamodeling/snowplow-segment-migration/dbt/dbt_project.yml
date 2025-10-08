@@ -26,7 +26,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   snowplow_segment_migration:
     base:
-      +materialized: view
+      +materialized: table
     assembly:
       +materialized: table
     sources:
@@ -63,8 +63,16 @@ vars:
       resource_title: ['book_name', 'context_page_title', 'title', 'page_title']
 
   include_sources:
-    - ask_pastor_john
     - production_desiring_god_website
+    - ruby_production_desiring_god_website
+    - ask_pastor_john
+    - ask_pastor_john
+    - ask_pastor_john
+    - ask_pastor_john_ios
+    - solid_joys_android
+    - solid_joys_ios
+    - sermon_of_the_day_android
+    - sermon_of_the_day_ios
 
   use_explicit_columns: true # Set to false to select all cols in superset of sources
 

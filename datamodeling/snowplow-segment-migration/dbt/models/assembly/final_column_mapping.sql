@@ -36,10 +36,9 @@ conditional_contexts_ranked AS (
         condition_operator,
         condition_value,
         context_data,
-        -- Add row number to pick first matching condition
         ROW_NUMBER() OVER (
             PARTITION BY LOWER(table_schema || '.' || table_name), context_type
-            ORDER BY table_schema, table_name  -- Add any preferred ordering here
+            ORDER BY table_schema, table_name
         ) as rn
     FROM SEGMENT_MIGRATION_TESTING.MAPPINGS.custom_context_conditional_mappings
     WHERE is_active = TRUE
@@ -52,7 +51,7 @@ events_with_mappings AS (
         em.priority,
         ROW_NUMBER() OVER (
             PARTITION BY u.EVENT_ID 
-            ORDER BY em.priority ASC, em.source_pattern
+            ORDER BY COALESCE(em.priority, 999999) ASC, em.source_pattern
         ) as rn
     FROM unioned_events u
     LEFT JOIN event_mappings em
@@ -74,10 +73,11 @@ events_classified AS (
             EVENT_NAME
         ) AS mapped_event_name
     FROM events_with_mappings
-    WHERE rn = 1 OR mapping_snowplow_event IS NULL
+    -- FIX #1: Use QUALIFY instead of WHERE to ensure one row per event
+    QUALIFY rn = 1
 ),
 
--- Join with context mappings and apply conditions in SELECT
+-- Join with context mappings
 events_with_contexts AS (
     SELECT 
         e.*,
@@ -91,7 +91,7 @@ events_with_contexts AS (
         -- Static Resource contexts (for C&C events)
         sc_resource.context_data as static_resource_data,
         
-        -- Conditional UI Element contexts - use FIRST_VALUE to get first match
+        -- Conditional UI Element contexts
         FIRST_VALUE(
             CASE
                 WHEN cc_ui.condition_operator = 'IS NULL' AND e.RESOURCE_SERIES IS NULL THEN cc_ui.context_data
@@ -106,7 +106,7 @@ events_with_contexts AS (
             ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
         ) as conditional_ui_element_data,
         
-        -- Conditional Email List contexts - use FIRST_VALUE to get first match
+        -- Conditional Email List contexts
         FIRST_VALUE(
             CASE
                 WHEN cc_email.condition_field = 'mailing_list' AND e.MAILING_LIST = cc_email.condition_value THEN cc_email.context_data
@@ -118,8 +118,11 @@ events_with_contexts AS (
             ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
         ) as conditional_email_list_data,
         
-        -- Add row number to deduplicate
-        ROW_NUMBER() OVER (PARTITION BY e.EVENT_ID ORDER BY cc_ui.rn, cc_email.rn) as context_rn
+        -- FIX #2: Handle NULLs properly in the ROW_NUMBER
+        ROW_NUMBER() OVER (
+            PARTITION BY e.EVENT_ID 
+            ORDER BY COALESCE(cc_ui.rn, 1), COALESCE(cc_email.rn, 1)
+        ) as context_rn
         
     FROM events_classified e
     
@@ -144,13 +147,10 @@ events_with_contexts AS (
     LEFT JOIN conditional_contexts_ranked cc_email
         ON LOWER(e.SOURCE_RELATION) = cc_email.source_pattern
         AND cc_email.context_type = 'email_list'
-),
-
--- Deduplicated events
-deduplicated_events AS (
-    SELECT * FROM events_with_contexts
-    WHERE context_rn = 1  -- Keep only one row per event_id
 )
+
+-- FIX #3: Remove the deduplication CTE entirely since we're already handling it above
+-- No need for deduplicated_events CTE
 
 SELECT
     -- Standard Snowplow columns
@@ -264,4 +264,6 @@ SELECT
     
     ,SOURCE_RELATION
 
-FROM deduplicated_events
+FROM events_with_contexts
+-- FIX #4: Use QUALIFY here to ensure one row per event
+QUALIFY context_rn = 1
